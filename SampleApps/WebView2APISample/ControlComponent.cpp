@@ -97,6 +97,15 @@ ControlComponent::ControlComponent(AppWindow* appWindow, Toolbar* toolbar)
                 }
                 m_toolbar->SetItemEnabled(Toolbar::Item_CancelButton, false);
                 m_toolbar->SetItemEnabled(Toolbar::Item_ReloadButton, true);
+
+                SYSTEMTIME		stm;
+                GetLocalTime(&stm);
+                TCHAR outStr[256];
+                wsprintf(outStr, L"%04d-%02d-%02d %02d:%02d:%02d%03d, NavigationCompleted\n",
+                    stm.wYear, stm.wMonth, stm.wDay,
+                    stm.wHour, stm.wMinute, stm.wSecond, stm.wMilliseconds);
+                OutputDebugString(outStr);
+
                 return S_OK;
             })
             .Get(),
@@ -119,10 +128,10 @@ ControlComponent::ControlComponent(AppWindow* appWindow, Toolbar* toolbar)
                     // The web page can cancel its own iframe loads, so we'll ignore that.
                     if (webErrorStatus != COREWEBVIEW2_WEB_ERROR_STATUS_OPERATION_CANCELED)
                     {
-                        m_appWindow->AsyncMessageBox(
+                 /*       m_appWindow->AsyncMessageBox(
                             L"Iframe navigation failed: "
                                 + WebErrorStatusToString(webErrorStatus),
-                            L"Navigation Failure");
+                            L"Navigation Failure");*/
                     }
                 }
                 return S_OK;
@@ -357,6 +366,14 @@ void ControlComponent::NavigateToAddressBar()
     std::wstring uri(length, 0);
     PWSTR buffer = const_cast<PWSTR>(uri.data());
     GetWindowText(GetAddressBar(), buffer, length + 1);
+
+    SYSTEMTIME		stm;
+    GetLocalTime(&stm);
+    TCHAR outStr[256];
+    wsprintf(outStr, L"%04d-%02d-%02d %02d:%02d:%02d%03d, Page load start URL:%s\n",
+        stm.wYear, stm.wMonth, stm.wDay,
+        stm.wHour, stm.wMinute, stm.wSecond, stm.wMilliseconds, uri.c_str());
+    OutputDebugString(outStr);
 
     HRESULT hr = m_webView->Navigate(uri.c_str());
     if (hr == E_INVALIDARG)

@@ -582,7 +582,7 @@ void ScriptComponent::HandleCDPTargets()
                     message = message + L"(from " + eventSourceLabel + L")";
                 }
                 message += eventDetails + L"\n";
-                OutputDebugString(message.c_str());
+                //OutputDebugString(message.c_str());
                 return S_OK;
             })
             .Get(),
